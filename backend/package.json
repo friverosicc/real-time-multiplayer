@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "REST API of the real-time multiplayer game application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node spec/jasmine.js"
+  },
+  "author": "Francisco Riveros",
+  "license": "ISC",
+  "dependencies": {
+    "args-list": "^0.3.3",
+    "express": "^4.13.4",
+    "mysql": "^2.10.2",
+    "q": "^1.4.1",
+    "underscore": "^1.8.3",
+    "validate.js": "^0.9.0"
+  },
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  }
+}
