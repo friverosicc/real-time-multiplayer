@@ -10,7 +10,7 @@ describe('User manager', function() {
 
     beforeEach(function() {
         _userDAOMock = require('../../src/dao/user')();
-        spyOn(_userDAOMock, 'create').and.callThrough();
+        spyOn(_userDAOMock, 'save').and.callThrough();
 
         _connectionMock = require('../lib/connection-mock')();
         spyOn(_connectionMock, 'query').and.callThrough();
@@ -23,39 +23,42 @@ describe('User manager', function() {
         userManager = UserManager(_poolMock, validate, _userDAOMock);
     });
 
-    it('should create new user successfully', function(done) {
+    it('should save user information successfully', function(done) {
         var user = { username: 'newUsername', token: '1234abc' };
+        var userExpected = {
+            username: user.username,
+            token: user.token,
+            balance: 1000
+        };
 
-        userManager.create(user)
-        .then(function() {
+        userManager.save(user);
+
+        setTimeout(function() {
             expect(_poolMock.beginTransaction).toHaveBeenCalled();
-            expect(_userDAOMock.create).toHaveBeenCalledWith(_connectionMock, user);
+            expect(_userDAOMock.save).toHaveBeenCalledWith(_connectionMock, userExpected);
             expect(_connectionMock.commit).toHaveBeenCalled();
 
             done();
-        });
+        }, 0);
     });
 
-    it('should reject the action when try to create user without username or token', function(done) {
+    it('should reject the action when try to save an user without username or token', function(done) {
         var invalidUser = {};
 
-        userManager.create(invalidUser)
-        .then(function() {
-            fail('the promise must be rejected');
+        userManager.save(invalidUser);
+
+        setTimeout(function() {
+            expect(_poolMock.beginTransaction.calls.count()).toEqual(0);
 
             done();
-        })
-        .catch(function() {
-            expect(_poolMock.beginTransaction.calls.count()).toEqual(0);
-            done();
-        });
+        }, 0);
     });
 
-    it('should rollback transaction when appears any problem in the user creation process', function(done) {
+    it('should rollback transaction when appears any problem in the user saving process', function(done) {
         _connectionMock.setThrowAnError(true);
         var user = { username: 'username', token: 'uniqueToken' };
 
-        userManager.create(user)
+        userManager.save(user)
 
         setTimeout(function() {
             expect(_connectionMock.commit.calls.count()).toEqual(0);

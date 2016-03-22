@@ -9,6 +9,6 @@ var user = { username: 'undefined', token: '123acs' };
 var validationResult = validate(user, { username: { presence: true } });
 
 
-userManager.create(user)
+userManager.save(user)
 .then(function(result) { console.log(result); })
 .catch(function(err) { console.log(err); });

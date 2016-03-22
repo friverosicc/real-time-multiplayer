@@ -6,18 +6,22 @@ var User = function(pool, validate, userDAO) {
         token: { presence: { message: 'is required' } }
     };
 
-    function create(user) {
+    const _INITIAL_BALANCE = 1000;
+
+    function save(user) {
+        user.balance = _INITIAL_BALANCE;
+        
         return validate.async(user, _constraint)
         .then(pool.beginTransaction)
         .then(function(connection) {
-            userDAO.create(connection, user)
+            userDAO.save(connection, user)
             .then(connection.commit)
             .catch(connection.rollback);
         });
     }
 
     return {
-        create: create
+        save: save
     };
 };
 
