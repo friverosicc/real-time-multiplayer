@@ -12,10 +12,10 @@ var UserManager = function(pool, validate, userDAO, inventoryDAO) {
         var _firstLogin = false;
         user.balance = _INITIAL_BALANCE;
 
-        validate.async(user, _constraint)
+        return validate.async(user, _constraint)
         .then(pool.beginTransaction)
         .then(function(connection) {
-            userDAO.findOne(connection, user.username)
+            return userDAO.findOne(connection, user.username)
             .then(function(data) {
                 if(validate.isEmpty(data))
                     _firstLogin = true;
