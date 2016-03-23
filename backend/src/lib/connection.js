@@ -55,11 +55,19 @@ var Connection = function(connection) {
         return promise;
     }
 
+    function release() {
+        return new Promise(function(resolve) {
+            _connection.release();
+            resolve();
+        });
+    }
+
     return {
         beginTransaction: beginTransaction,
         commit: commit,
         rollback: rollback,
-        query: query
+        query: query,
+        release: release
     };
 
 };

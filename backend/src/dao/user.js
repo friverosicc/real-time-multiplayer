@@ -10,8 +10,18 @@ var UserDAO = function() {
         return connection.query(statement, values);
     }
 
+    function findOne(connection, username) {
+        var statement   = "SELECT username, balance, token "
+                        + "FROM user "
+                        + "WHERE username = ?";
+        var values = [username];
+
+        return connection.query(statement, values);
+    }
+
     return {
-        save: save
+        save: save,
+        findOne: findOne
     }
 }
 

@@ -4,25 +4,24 @@ var ConnectionMock = function() {
     var _throwAnError = false;
 
     function query(statement, values) {
-        var promise = new Promise(function(resolve, reject) {
+        return new Promise(function(resolve, reject) {
             if(_throwAnError)
                 reject('error');
             else
                 resolve();
         });
-
-        return promise;
     }
 
     function commit() {
-        var promise = new Promise(function(resolve, reject) { resolve(); });
-
-        return promise;
+        return new Promise(function(resolve) { resolve(); });
     }
 
     function rollback(error) {
-        var promise = new Promise(function(resolve, reject) { reject(error); });
-        return promise;
+        return new Promise(function(resolve, reject) { reject(error); });
+    }
+
+    function release() {
+        return new Promise(function(resolve) { resolve(); });
     }
 
     function setThrowAnError(throwAnError) {
@@ -33,6 +32,7 @@ var ConnectionMock = function() {
         query: query,
         commit: commit,
         rollback: rollback,
+        release: release,
         setThrowAnError: setThrowAnError
     };
 

@@ -3,13 +3,18 @@
 var PoolMock = function(connectionMock) {
 
     function beginTransaction() {
+        return getConnection();
+    }
+
+    function getConnection() {
         return new Promise(function(resolve, reject) {
             resolve(connectionMock);
         });
     }
 
     return {
-        beginTransaction: beginTransaction
+        beginTransaction: beginTransaction,
+        getConnection: getConnection
     };
 };
 
