@@ -53,7 +53,7 @@ describe('Auction manager', function() {
 
         _auctionDAOMock = require('../../src/dao/auction')();
         spyOn(_auctionDAOMock, 'save').and.callThrough();
-        spyOn(_auctionDAOMock, 'find').and.callFake(function() {
+        spyOn(_auctionDAOMock, 'findActive').and.callFake(function() {
             return new Promise(function(resolve, reject) {
                 if(_alreadyExistsAnAuction)
                     resolve([_auction]);
@@ -140,7 +140,7 @@ describe('Auction manager', function() {
 
         auctionManager.find()
         .then(function(data) {
-            expect(_auctionDAOMock.find).toHaveBeenCalledWith(_connectionMock);
+            expect(_auctionDAOMock.findActive).toHaveBeenCalledWith(_connectionMock);
             expect(data[0]).toBeDefined();
             done();
         });
@@ -202,6 +202,7 @@ describe('Auction manager', function() {
 
         _auction.buyer = 'anoherUser';
         _auction.winning_bid = 150;
+        _auction.updated_at = new Date();
 
         var bid = {
             buyer: _buyer.username,
@@ -265,7 +266,45 @@ describe('Auction manager', function() {
         }, 0);
     });
 
+    it('should save the new bid successfully, in the 10 seconds extra time', function(done) {
+        _alreadyExistsAnAuction = true;
+        _createManager();
+
+        var auctionTime = new Date(_auction.created_at.getTime());
+
+        _auction.buyer = 'anoherUser';
+        _auction.winning_bid = 150;
+        _auction.updated_at = new Date(auctionTime.setSeconds(auctionTime.getSeconds() + 88));
+
+        var bid = {
+            buyer: _buyer.username,
+            bid: 160,
+            time: new Date(auctionTime.setSeconds(auctionTime.getSeconds() + 9))
+        };
+
+        var auctionExpected = {
+            seller: _auction.seller,
+            item: _auction.item,
+            minimum_bid: _auction.minimum_bid,
+            quantity: _auction.quantity,
+            buyer: bid.buyer,
+            winning_bid: bid.bid,
+            state: 1,
+            created_at: _auction.created_at,
+            updated_at: bid.time
+        };
+
+        auctionManager.placeBid(bid);
+
+        setTimeout(function() {
+            expect(_auctionDAOMock.save).toHaveBeenCalledWith(_connectionMock, auctionExpected);
+            expect(_connectionMock.commit).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
+
     it('should rollback transaction when appears any problem in the process of place bids', function(done) {
+        _alreadyExistsAnAuction = true;
         _connectionMock.setThrowAnError(true);
         _createManager();
 

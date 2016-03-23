@@ -2,6 +2,7 @@
 
 var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO) {
     const _MAX_TIME_TO_PLACE_BID = 90;
+    const _MAX_EXTRA_TIME_TO_PLACE_BID = 10;
     var _constraintForNewAuction = {
         seller: { presence: { message: 'is required' } },
         item: { presence: { message: 'is required' } },
@@ -39,7 +40,7 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
         return validate.async(auction, _constraintForNewAuction)
         .then(pool.beginTransaction)
         .then(function(connection) {
-            return auctionDAO.find(connection)
+            return auctionDAO.findActive(connection)
             .then(function(data) {
                 if(!validate.isEmpty(data))
                     return _reject('sorry, an auction is already active');
@@ -59,7 +60,7 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
 
     function find() {
         return pool.getConnection()
-        .then(auctionDAO.find);
+        .then(auctionDAO.findActive);
     }
 
     function placeBid(bid) {
@@ -68,7 +69,7 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
         return validate.async(bid, _constraintForBid)
         .then(pool.beginTransaction)
         .then(function(connection) {
-            return auctionDAO.find(connection)
+            return auctionDAO.findActive(connection)
             .then(function(data) {
                 auction = data[0];
 
@@ -117,13 +118,19 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
     }
 
     function _bidOutOfTime(auction, bid) {
-        var diff = (bid.time.getTime() - auction.updated_at.getTime()) / 1000;
+        var outOfTime = false;
 
-        return diff > _MAX_TIME_TO_PLACE_BID;
+        var timeFromCreation = (bid.time.getTime() - auction.created_at.getTime()) / 1000;
+        var timeFromLastBind = (bid.time.getTime() - auction.updated_at.getTime()) / 1000;
+
+        if(timeFromCreation > _MAX_TIME_TO_PLACE_BID && timeFromLastBind > _MAX_EXTRA_TIME_TO_PLACE_BID)
+            outOfTime = true;
+
+        return outOfTime;
     }
 
     function _bidIsLessOrEqualToWinning(newBid, winningBid) {
-        return winningBid <= winningBid;
+        return newBid <= winningBid;
     }
 
     function _enoughCoinsToPlaceBid(theLess, theGreater) {

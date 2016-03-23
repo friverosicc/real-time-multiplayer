@@ -23,9 +23,10 @@ var AuctionDAO = function() {
         return connection.query(statement, values);
     }
 
-    function find(connection) {
+    function findActive(connection) {
         var statement   = 'SELECT seller, created_at, item, minimum_bid, quantity, buyer, winning_bid, state, updated_at '
-                        + 'FROM auction';
+                        + 'FROM auction '
+                        + 'WHERE state = 1';
 
         return connection.query(statement, []);
     }
@@ -33,7 +34,7 @@ var AuctionDAO = function() {
     return {
         save: save,
         remove: remove,
-        find: find
+        findActive: findActive
     };
 };
 
