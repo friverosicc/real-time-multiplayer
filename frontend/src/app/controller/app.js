@@ -2,10 +2,11 @@
     'use strict';
 
     angular.module('demo-app.controller', [
-        'ngMaterial',
+        'ngMaterial',        
         'demo-app.controller.login',
         'demo-app.controller.player-stats',
         'demo-app.controller.inventory',
+        'demo-app.controller.auction',
         'demo-app.service.io',
         'demo-app.service.session',
         'demo-app.common.player-stats',
@@ -31,8 +32,8 @@
 
             function _showWidgets() {
                 $auction.show({
-                    controller: 'loginController',
-                    template: '<h1>AUCTION</h1>',
+                    controller: 'auctionController',
+                    templateUrl: 'controller/auction/auction.tpl.html',
                     parent: angular.element(document.body),
                 });
 

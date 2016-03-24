@@ -27,9 +27,7 @@ var jsVendorPaths = [
     'vendor/angular-animate/angular-animate.js',
     'vendor/angular-aria/angular-aria.js',
     'vendor/angular-material/angular-material.js',
-    'vendor/angular-messages/angular-messages.js',
-    'vendor/moment/moment.js',
-    'vendor/angular-moment/angular-moment.js'
+    'vendor/angular-messages/angular-messages.js'
 ];
 
 gulp.task('clean', function(cb) {

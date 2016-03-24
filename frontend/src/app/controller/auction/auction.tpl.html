@@ -1,0 +1,48 @@
+<section class="md-whiteframe-z1" style="padding: 0;" flex="40">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h3><span>Current Auction</span></h3>
+            </div>
+        </md-toolbar>
+
+        <md-content layout-padding layout="column">
+            <span ng-hide="auction">No auction at the moment</span>
+
+            <div ng-show="auction">
+                <div><span>Seller: {{auction.seller}}</span></div>
+
+                <div layout layout-align="center">
+                    <div layout="column" layout-padding layout-align="center center">
+                        <img style="height: 100px;" ng-src="http://localhost:8082/css/img/{{auction.item}}.png"></img>
+                        <span>{{auction.item}}</span>
+                    </div>
+                    <div layout="column" layout-padding layout-align="center center">
+                        <span>Quantity</span>
+                        <span>{{auction.quantity}}</span>
+                    </div>
+                </div>
+
+                <div>
+                     <span>Time left: {{timeLeft}} seconds</span>
+                </div>
+
+                <div ng-show="auction.buyer">
+                     <span>winning bid: {{auction.winning_bid}}</span>
+                </div>
+
+                <div ng-show="!auction.buyer">
+                     <span>Minimum bid: {{auction.minimum_bid}}</span>
+                </div>
+
+                <div ng-hide="inputHidden" layout layout-align="center">
+                    <md-input-container>
+                        <input type="number" min="{{auction.minimum_bid}}" ng-model="bid.bid" required></input>
+                    </md-input-container>
+                </div>
+
+                <div ng-hide="inputHidden" layout layout-align="center">
+                    <md-button class="md-primary md-raised">Place bid</md-button>
+                </div>
+            </div>
+        </md-content>
+</section>

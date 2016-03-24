@@ -3,8 +3,7 @@
 
     angular.module('demo-app', [
         'ngMaterial',
-        'ngMessages',
-        'angularMoment',
+        'ngMessages',        
         'demo-app-tpl',
         'demo-app.controller',
         'demo-app.service.io',
