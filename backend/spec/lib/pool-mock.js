@@ -7,9 +7,7 @@ var PoolMock = function(connectionMock) {
     }
 
     function getConnection() {
-        return new Promise(function(resolve, reject) {
-            resolve(connectionMock);
-        });
+        return Promise.resolve(connectionMock);
     }
 
     return {

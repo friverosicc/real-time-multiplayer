@@ -28,7 +28,7 @@ var UserManager = function(pool, validate, userDAO, inventoryDAO) {
                 if(_firstLogin)
                     return _saveInitialInventory(connection, user.username);
                 else
-                    return _mockPromise();
+                    return Promise.resolve();
             })
             .then(connection.commit)
             .catch(connection.rollback);
@@ -57,10 +57,6 @@ var UserManager = function(pool, validate, userDAO, inventoryDAO) {
         .then(function(connection) {
             return inventoryDAO.find(connection, username);
         });
-    }
-
-    function _mockPromise() {
-        return new Promise(function(resolve) { resolve(); });
     }
 
     return {

@@ -20,9 +20,20 @@ var InventoryDAO = function() {
         return connection.query(statement, values);
     }
 
+    function findOne(connection, username, item) {
+        var statement   = 'SELECT item AS name, quantity '
+                        + 'FROM inventory '
+                        + 'WHERE username = ? '
+                        + 'AND item = ? ';
+        var values = [username, item];
+
+        return connection.query(statement, values);
+    }
+
     return {
         save: save,
-        find: find
+        find: find,
+        findOne: findOne
     };
 };
 

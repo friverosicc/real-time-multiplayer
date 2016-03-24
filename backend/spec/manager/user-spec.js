@@ -18,20 +18,16 @@ describe('User manager', function() {
         _userDAOMock = require('../../src/dao/user')();
         spyOn(_userDAOMock, 'save').and.callThrough();
         spyOn(_userDAOMock, 'findOne').and.callFake(function(connection, username) {
-            return new Promise(function(resolve) {
-                if(username === 'userAlreadyExists')
-                    resolve([_user]);
-                else
-                    resolve([]);
-            });
+            if(username === 'userAlreadyExists')
+                return Promise.resolve([_user]);
+            else
+                return Promise.resolve([]);
         });
 
         _inventoryDAOMock = require('../../src/dao/inventory')();
         spyOn(_inventoryDAOMock, 'save').and.callThrough();
         spyOn(_inventoryDAOMock, 'find').and.callFake(function(connection, username) {
-            return new Promise(function(resolve) {
-                resolve(_inventory);
-            });
+            return Promise.resolve(_inventory);            
         });
 
         _connectionMock = require('../lib/connection-mock')();
