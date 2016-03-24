@@ -1,0 +1,25 @@
+{
+  "name": "frontend",
+  "description": "Web client application of the real-time multiplayer game",
+  "main": "index.js",
+  "authors": [
+    "Francisco Riveros"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "vendor"
+  ],
+  "dependencies": {
+    "angular": "~1.5.0",
+    "angular-messages": "~1.5.0",
+    "material-design-icons": "~2.2.1",
+    "animate.css": "~3.5.1",
+    "angular-material": "~1.0.6",
+    "angular-moment": "~0.10.3",
+    "socket.io.client": "^1.3.5"
+  }
+}

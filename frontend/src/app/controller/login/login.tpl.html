@@ -1,0 +1,25 @@
+<md-dialog aria-label="Mango (Fruit)"  ng-cloak>
+    <form name="loginForm">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Login</h2>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <md-input-container>
+                    <label>Username</label>
+                    <input name="username" type="text" md-autofocus ng-model="user.username" required></input>
+                    <div ng-messages="loginForm.username.$error">
+    					<div ng-message="required">Required</div>
+    				</div>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button class="md-raised md-primary" ng-click="login()" ng-disabled="!isPossibleTryToLogin()">
+                Enter
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
