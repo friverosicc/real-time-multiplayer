@@ -6,43 +6,51 @@
         </md-toolbar>
 
         <md-content layout-padding layout="column">
-            <span ng-hide="auction">No auction at the moment</span>
+            <form name="bidForm">
+                <span ng-hide="auction">No auction at the moment</span>
 
-            <div ng-show="auction">
-                <div><span>Seller: {{auction.seller}}</span></div>
+                <div ng-show="auction">
+                    <div><span>Seller: {{auction.seller}}</span></div>
 
-                <div layout layout-align="center">
-                    <div layout="column" layout-padding layout-align="center center">
-                        <img style="height: 100px;" ng-src="http://localhost:8082/css/img/{{auction.item}}.png"></img>
-                        <span>{{auction.item}}</span>
+                    <div layout layout-align="center">
+                        <div layout="column" layout-padding layout-align="center center">
+                            <img style="height: 100px;" ng-src="http://201.241.50.16:8082/css/img/{{auction.item}}.png"></img>
+                            <span>{{auction.item}}</span>
+                        </div>
+                        <div layout="column" layout-padding layout-align="center center">
+                            <span>Quantity</span>
+                            <span>{{auction.quantity}}</span>
+                        </div>
                     </div>
-                    <div layout="column" layout-padding layout-align="center center">
-                        <span>Quantity</span>
-                        <span>{{auction.quantity}}</span>
+
+                    <div>
+                         <span>Time left: {{timeLeft}} seconds</span>
+                    </div>
+
+                    <div ng-show="auction.buyer">
+                         <span>winning bid: {{auction.winning_bid}}</span>
+                    </div>
+
+                    <div ng-show="!auction.buyer">
+                         <span>Minimum bid: {{auction.minimum_bid}}</span>
+                    </div>
+
+                    <div ng-hide="inputHidden" layout layout-align="center">
+                        <md-input-container>
+                            <input name="bid" type="number" min="0" ng-model="bid.bid" required></input>
+                            <div ng-messages="bidForm.bid.$error">
+            					<div ng-message="required">Required</div>
+                                <div ng-message="min">must be greater than 0</div>
+            				</div>
+                        </md-input-container>
+                    </div>
+
+                    <div ng-hide="inputHidden" layout layout-align="center">
+                        <md-button class="md-primary md-raised" ng-disabled="!(bidForm.$valid && bidForm.$dirty)" ng-click="placeBid()">
+                            Place bid
+                        </md-button>
                     </div>
                 </div>
-
-                <div>
-                     <span>Time left: {{timeLeft}} seconds</span>
-                </div>
-
-                <div ng-show="auction.buyer">
-                     <span>winning bid: {{auction.winning_bid}}</span>
-                </div>
-
-                <div ng-show="!auction.buyer">
-                     <span>Minimum bid: {{auction.minimum_bid}}</span>
-                </div>
-
-                <div ng-hide="inputHidden" layout layout-align="center">
-                    <md-input-container>
-                        <input type="number" min="{{auction.minimum_bid}}" ng-model="bid.bid" required></input>
-                    </md-input-container>
-                </div>
-
-                <div ng-hide="inputHidden" layout layout-align="center">
-                    <md-button class="md-primary md-raised">Place bid</md-button>
-                </div>
-            </div>
+            </form>
         </md-content>
 </section>

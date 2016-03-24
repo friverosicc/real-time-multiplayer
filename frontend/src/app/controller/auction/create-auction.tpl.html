@@ -1,0 +1,40 @@
+<md-dialog aria-label="Mango (Fruit)"  ng-cloak>
+    <form name="auctionForm">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Create auction</h2>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content" layout="column">
+                <md-input-container>
+                    <label>Quantity</label>
+                    <input name="quantity" type="number" md-autofocus ng-model="auction.quantity" required min="1"></input>
+                    <div ng-messages="auctionForm.quantity.$error">
+    					<div ng-message="required">Required</div>
+                        <div ng-message="min">must be greater then 0</div>
+    				</div>
+                </md-input-container>
+
+                <md-input-container>
+                    <label>Minimun bid</label>
+                    <input name="minimum_bid" type="number" ng-model="auction.minimum_bid" required min="1"></input>
+                    <div ng-messages="auctionForm.minimum_bid.$error">
+    					<div ng-message="required">Required</div>
+                        <div ng-message="min">must be greater then 0</div>
+    				</div>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions>
+            <div layout layout-padding>
+                <md-button class="md-raised md-primary" ng-click="create()" ng-disabled="!(auctionForm.$valid && auctionForm.$dirty)">
+                    Start auction
+                </md-button>
+                <md-button class="md-raised md-primary" ng-click="cancel()">
+                    Cancel
+                </md-button>
+            </div>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

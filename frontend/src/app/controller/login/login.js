@@ -22,11 +22,7 @@
             _socket.on('login success', function() {
                 userSession.save($scope.user);
                 $mdDialog.hide();
-            });
-
-            $scope.isPossibleTryToLogin = function() {
-                return $scope.loginForm.$valid && $scope.loginForm.$dirty;
-            };
+            });            
         }
     ]);
 })();

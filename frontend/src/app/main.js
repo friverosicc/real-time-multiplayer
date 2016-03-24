@@ -3,7 +3,7 @@
 
     angular.module('demo-app', [
         'ngMaterial',
-        'ngMessages',        
+        'ngMessages',
         'demo-app-tpl',
         'demo-app.controller',
         'demo-app.service.io',
@@ -15,6 +15,7 @@
         }
     ])
     .run(function(ioService) {
-        ioService.init('http://localhost:8080');
+        //ioService.init('http://localhost:8080');
+        ioService.init('http://201.241.50.16:8080');
     });
 })();

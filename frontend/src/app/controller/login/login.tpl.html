@@ -17,7 +17,7 @@
             </div>
         </md-dialog-content>
         <md-dialog-actions layout="row">
-            <md-button class="md-raised md-primary" ng-click="login()" ng-disabled="!isPossibleTryToLogin()">
+            <md-button class="md-raised md-primary" ng-click="login()" ng-disabled="!(loginForm.$valid && loginForm.$dirty)">
                 Enter
             </md-button>
         </md-dialog-actions>

@@ -2,11 +2,12 @@
     'use strict';
 
     angular.module('demo-app.controller', [
-        'ngMaterial',        
+        'ngMaterial',
         'demo-app.controller.login',
         'demo-app.controller.player-stats',
         'demo-app.controller.inventory',
         'demo-app.controller.auction',
+        'demo-app.controller.auction.create',
         'demo-app.service.io',
         'demo-app.service.session',
         'demo-app.common.player-stats',

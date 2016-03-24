@@ -22,6 +22,18 @@
                 $scope.inventory = inventory;
                 $scope.$apply();
             });
+
+            $scope.openForm = function(item) {
+                $mdDialog.show({
+                    controller: 'createAuctionController',
+                    templateUrl: 'controller/auction/create-auction.tpl.html',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose: true,
+                    locals: {
+                        item: item.name
+                    }
+                });
+            };
         }
     ]);
 })();
