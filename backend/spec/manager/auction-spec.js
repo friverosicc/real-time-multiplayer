@@ -35,31 +35,34 @@ describe('Auction manager', function() {
         _userDAOMock = require('../../src/dao/user')();
         spyOn(_userDAOMock, 'save').and.callThrough();
         spyOn(_userDAOMock, 'findOne').and.callFake(function(connection, username) {
-            return new Promise(function(resolve) {
-                if(username === _seller.username)
-                    resolve([_seller]);
-                else
-                    resolve([_buyer]);
-            });
+            if(username === _seller.username)
+                return Promise.resolve([_seller]);
+            else
+                return Promise.resolve([_buyer]);
         });
 
         _inventoryDAOMock = require('../../src/dao/inventory')();
         spyOn(_inventoryDAOMock, 'save').and.callThrough();
         spyOn(_inventoryDAOMock, 'find').and.callFake(function(connection, username) {
-            return new Promise(function(resolve) {
-                resolve(_sellerInventory);
-            });
+            if(username === _seller.username)
+                return Promise.resolve(_sellerInventory);
+            else
+                return Promise.resolve(_buyerInventory);
+        });
+        spyOn(_inventoryDAOMock, 'findOne').and.callFake(function(connection, username) {
+            if(username === _seller.username)
+                return Promise.resolve([_sellerInventory[1]]);
+            else
+                return Promise.resolve([_buyerInventory[1]]);
         });
 
         _auctionDAOMock = require('../../src/dao/auction')();
         spyOn(_auctionDAOMock, 'save').and.callThrough();
         spyOn(_auctionDAOMock, 'findActive').and.callFake(function() {
-            return new Promise(function(resolve, reject) {
-                if(_alreadyExistsAnAuction)
-                    resolve([_auction]);
-                else
-                    resolve([]);
-            });
+            if(_alreadyExistsAnAuction)
+                return Promise.resolve([_auction]);
+            else
+                return Promise.resolve([]);
         });
 
         _connectionMock = require('../lib/connection-mock')();
@@ -325,8 +328,81 @@ describe('Auction manager', function() {
 
     });
 
+    it('should close the auction successfully, when exists a buyer', function(done) {
+        _alreadyExistsAnAuction = true;
+        _createManager();
 
-    xit('should close the auction successfully', function(done) {});
+        _auction.buyer = _buyer.username;
+        _auction.winning_bid = 150;
+        _auction.updated_at = new Date();
+
+        var auctionExpected = {
+            seller: _auction.seller,
+            item: _auction.item,
+            minimum_bid: _auction.minimum_bid,
+            quantity: _auction.quantity,
+            buyer: _auction.buyer,
+            winning_bid: _auction.winning_bid,
+            state: 2,
+            created_at: _auction.created_at,
+            updated_at: _auction.updated_at
+        };
+
+        var sellerExpected = {
+            username: _seller.username,
+            token: _seller.token,
+            balance: 1150
+        };
+
+        var buyerExpected = {
+            username: _buyer.username,
+            token: _buyer.token,
+            balance: 850
+        };
+
+        var itemSellerExpected = { name: 'carrots', quantity: 13 };
+        var itemBuyerExpected = { name: 'carrots', quantity: 23 };
+
+        auctionManager.close();
+
+        setTimeout(function() {            
+            expect(_auctionDAOMock.save).toHaveBeenCalledWith(_connectionMock, auctionExpected);
+            expect(_userDAOMock.save.calls.argsFor(0)).toEqual([_connectionMock, sellerExpected]);
+            expect(_userDAOMock.save.calls.argsFor(1)).toEqual([_connectionMock, buyerExpected]);
+            expect(_inventoryDAOMock.save.calls.argsFor(0)).toEqual([_connectionMock, _auction.seller, itemSellerExpected]);
+            expect(_inventoryDAOMock.save.calls.argsFor(1)).toEqual([_connectionMock, _auction.buyer, itemBuyerExpected]);
+
+            done();
+        }, 0);
+    });
+
+    it('should close the auction successfully, when does not exist a buyer', function(done) {
+        _alreadyExistsAnAuction = true;
+        _createManager();
+
+        var auctionExpected = {
+            seller: _auction.seller,
+            item: _auction.item,
+            minimum_bid: _auction.minimum_bid,
+            quantity: _auction.quantity,
+            winning_bid: _auction.winning_bid,
+            state: 2,
+            created_at: _auction.created_at,
+            updated_at: _auction.updated_at
+        };
+
+        auctionManager.close();
+
+        setTimeout(function() {
+            expect(_auctionDAOMock.save).toHaveBeenCalledWith(_connectionMock, auctionExpected);
+            expect(_userDAOMock.save.calls.count()).toEqual(0);
+            expect(_userDAOMock.save.calls.count()).toEqual(0);
+            expect(_inventoryDAOMock.save.calls.count()).toEqual(0);
+            expect(_inventoryDAOMock.save.calls.count()).toEqual(0);
+            expect(_connectionMock.commit).toHaveBeenCalled();
+            done();
+        }, 0);
+    });
 
     function _createManager() {
         auctionManager = AuctionManager(_poolMock, validate, _userDAOMock, _inventoryDAOMock, _auctionDAOMock);
