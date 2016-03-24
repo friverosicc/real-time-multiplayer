@@ -55,11 +55,9 @@ var Connection = function(connection) {
         return promise;
     }
 
-    function release() {
-        return new Promise(function(resolve) {
-            _connection.release();
-            resolve();
-        });
+    function release(data) {
+        _connection.release();
+        return Promise.resolve(data);
     }
 
     return {

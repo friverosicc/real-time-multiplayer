@@ -42,6 +42,8 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
         .then(pool.beginTransaction)
         .then(function(connection) {
             auction.state = _AUCTION_STATES.ACTIVE;
+            auction.created_at = new Date(auction.created_at);
+            auction.updated_at = new Date(auction.updated_at);
 
             return auctionDAO.findActive(connection)
             .then(function(data) {
@@ -63,7 +65,10 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
 
     function find() {
         return pool.getConnection()
-        .then(auctionDAO.findActive);
+        .then(function(connection) {
+            return auctionDAO.findActive(connection)
+            .then(connection.release);
+        });
     }
 
     function placeBid(bid) {
@@ -72,6 +77,8 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
         return validate.async(bid, _constraintForBid)
         .then(pool.beginTransaction)
         .then(function(connection) {
+            bid.time = new Date(bid.time);
+
             return auctionDAO.findActive(connection)
             .then(function(data) {
                 auction = data[0];
@@ -116,8 +123,11 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
             return auctionDAO.findActive(connection)
             .then(function(data) {
                 auction = data[0];
-                auction.state = _AUCTION_STATES.CLOSED;
 
+                if(validate.isEmpty(auction))
+                    return Promise.resolve();
+
+                auction.state = _AUCTION_STATES.CLOSED;
                 return auctionDAO.save(connection, auction);
             })
             .then(function() {
@@ -154,10 +164,12 @@ var AuctionManager = function(pool, validate, userDAO, inventoryDAO, auctionDAO)
                 promises.push(inventoryDAO.save(connection, seller.username, itemSeller));
                 promises.push(inventoryDAO.save(connection, buyer.username, itemBuyer));
 
-                return Promises.all(promises);
+                return Promise.all(promises);
             })
             .then(connection.commit)
-            .catch(connection.rollback);
+            .catch(function(err) {                
+                connection.rollback(err);
+            });
         });
     }
 

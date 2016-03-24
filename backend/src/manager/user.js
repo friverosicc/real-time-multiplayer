@@ -48,14 +48,16 @@ var UserManager = function(pool, validate, userDAO, inventoryDAO) {
     function findOne(username) {
         return pool.getConnection()
         .then(function(connection) {
-            return userDAO.findOne(connection, username);
+            return userDAO.findOne(connection, username)
+            .then(connection.release);
         });
     }
 
     function findInventory(username) {
         return pool.getConnection()
         .then(function(connection) {
-            return inventoryDAO.find(connection, username);
+            return inventoryDAO.find(connection, username)
+            .then(connection.release);
         });
     }
 

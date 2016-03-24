@@ -10,21 +10,76 @@ var auctionDAO = require('./dao/auction')();
 var userManager = require('./manager/user')(pool, validate, userDAO, inventoryDAO);
 var auctionManager = require('./manager/auction')(pool, validate, userDAO, inventoryDAO, auctionDAO);
 
-var user = { username: 'undefined', token: new Date().getTime() };
-var auction = {
-    seller: user.username,
-    item: 'carrots',
-    quantity: 10,
-    minimum_bid: 1000,
-    state: 1,
-    created_at: new Date(),
-    updated_at: new Date()
-};
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-/*userManager.login(user)
-.then(function(result) { console.log(result); })
-.catch(function(err) { console.log(err); });*/
+io.on('connection', function(socket) {
+    socket.on('login', _login);
+    socket.on('find user', _findUser);
+    socket.on('find inventory', _findInventory);
+    socket.on('find auction', _findAuction);
+    socket.on('create auction', _createAuction);
+    socket.on('close auction', _closeAuction);
+    socket.on('place bid', _placeBid);
 
-auctionManager.create(auction)
-.then(function(result) { console.log(result); })
-.catch(function(err) { console.log(err); });
+    function _login(user) {
+        userManager.login(user)
+        .then(function() {
+            socket.emit('login success', 'ok');
+            io.emit('logout user', user);
+        });
+    }
+
+    function _findUser(username) {
+        userManager.findOne(username)
+        .then(function(data) {
+            socket.emit('find user success', data[0]);
+        });
+    }
+
+    function _findInventory(username) {
+        userManager.findInventory(username)
+        .then(function(inventory) {
+            socket.emit('find inventory success', inventory);
+        });
+    }
+
+    function _findAuction() {
+        auctionManager.find()
+        .then(function(data) {
+            io.emit('find auction success', data[0]);
+        });
+    }
+
+    function _createAuction(auction) {
+        auctionManager.create(auction)
+        .then(function() {
+            socket.emit('create auction success', 'ok');
+            _findAuction();
+        })
+        .catch(function(err) {
+            socket.emit('create auction error', err);
+        });
+    }
+
+    function _closeAuction() {
+        io.emit('close auction success', 'ok');
+        auctionManager.close()
+        .then(_findAuction);
+    }
+
+    function _placeBid(bid) {
+        auctionManager.placeBid(bid)
+        .then(function() {
+            socket.emit('place bid success', 'ok');
+        })
+        .catch(function(err) {
+            socket.emit('place bid error', err);
+        });
+    }
+});
+
+http.listen(8080, function() {
+    console.log("Running in port 8080");
+});

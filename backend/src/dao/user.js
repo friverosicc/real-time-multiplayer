@@ -4,8 +4,8 @@ var UserDAO = function() {
 
     function save(connection, user) {
         var statement   = 'INSERT INTO user (username, balance, token) VALUES (?, ?, ?) '
-                        + 'ON DUPLICATE KEY UPDATE token = ?';
-        var values = [user.username, user.balance, user.token, user.token];
+                        + 'ON DUPLICATE KEY UPDATE token = ?, balance = ?';
+        var values = [user.username, user.balance, user.token, user.token, user.balance];
 
         return connection.query(statement, values);
     }

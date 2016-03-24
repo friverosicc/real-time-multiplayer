@@ -18,8 +18,8 @@ var ConnectionMock = function() {
         return Promise.reject(error);
     }
 
-    function release() {
-        return Promise.resolve();
+    function release(data) {
+        return Promise.resolve(data);
     }
 
     function setThrowAnError(throwAnError) {
