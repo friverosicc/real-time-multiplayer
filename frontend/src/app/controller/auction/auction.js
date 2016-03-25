@@ -20,6 +20,7 @@
             var _socket = ioService.getSocket();
             $scope.inputHidden = false;
             $scope.bid = { buyer: _user.username };
+            $scope.user = _user;
 
             function _countDown() {
                 $scope.timeLeft--;

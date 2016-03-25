@@ -4,7 +4,7 @@
   "description": "Server of the real-time multiplayer game application",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/server.js",
     "test": "node spec/jasmine.js"
   },
   "author": "Francisco Riveros",

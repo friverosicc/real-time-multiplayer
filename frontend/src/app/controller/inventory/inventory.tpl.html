@@ -1,4 +1,4 @@
-<section class="md-whiteframe-z1" style="padding: 0;" flex="40">
+<section class="md-whiteframe-z1" style="padding: 0;" >
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h3><span>Inventory</span></h3>
@@ -9,7 +9,7 @@
             <md-list>
                 <md-list-item class="md-3-line" ng-repeat="item in inventory">
                     <div layout="column" flex layout-align="center center" layout-padding>
-                        <img style="height: 100px;" ng-src="http://201.241.50.16:8082/css/img/{{item.name}}.png"></img>
+                        <img style="height: 100px;" ng-src="http://localhost:8082/css/img/{{item.name}}.png"></img>
                         <span>{{item.name}}</span>
                     </div>
                     <div layout="column" flex layout-align="center center" layout-padding>

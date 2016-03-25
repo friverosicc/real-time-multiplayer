@@ -15,7 +15,7 @@
         }
     ])
     .run(function(ioService) {
-        //ioService.init('http://localhost:8080');
-        ioService.init('http://201.241.50.16:8080');
+        ioService.init('http://localhost:8080');
+        //ioService.init('http://201.241.50.16:8080');
     });
 })();
